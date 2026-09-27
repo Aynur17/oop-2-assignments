@@ -3,7 +3,7 @@ package com.nhlstenden.appstores;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppStore
+public abstract class AppStore
 {
     private static final double REVENUE_PERCENTAGE = 0.70;
 
@@ -15,8 +15,8 @@ public class AppStore
     public AppStore(Currency currency)
     {
         this.setCurrency(currency);
-        this.apps = new ArrayList<>();
-        this.purchases = new ArrayList<>();
+        this.setApps(new ArrayList<>());
+        this.setPurchases(new ArrayList<>());
     }
 
     public Currency getCurrency()
@@ -41,7 +41,7 @@ public class AppStore
 
     public void uploadApp(App app)
     {
-        this.apps.add(app);
+        this.getApps().add(app);
     }
 
     public void purchaseApp(User user, App app) throws DownloadNotAllowedException
@@ -55,14 +55,14 @@ public class AppStore
                 user, app, app.getPrice()
         );
 
-        this.purchases.add(purchase);
+        this.getPurchases().add(purchase);
     }
 
     public double getTotalRevenue()
     {
         double totalRevenue = 0;
 
-        for (Purchase purchase : this.purchases)
+        for (Purchase purchase : this.getPurchases())
         {
             totalRevenue += purchase.getPrice() * REVENUE_PERCENTAGE;
         }
@@ -74,7 +74,7 @@ public class AppStore
     {
         double revenue = 0;
 
-        for (Purchase purchase : this.purchases)
+        for (Purchase purchase : this.getPurchases())
         {
             if (purchase.getApp() == app)
             {
@@ -83,5 +83,41 @@ public class AppStore
         }
 
         return revenue;
+    }
+
+    public void setApps(List<App> apps)
+    {
+        if (apps == null || apps.isEmpty())
+        {
+            throw new IllegalArgumentException("apps cannot be null or empty");
+        }
+
+        for (Object appsItem : apps)
+        {
+            if (appsItem == null)
+            {
+                throw new IllegalArgumentException("apps cannot be null");
+            }
+        }
+
+        this.apps = new ArrayList<>(apps);
+    }
+
+    public void setPurchases(List<Purchase> purchases)
+    {
+        if (purchases == null || purchases.isEmpty())
+        {
+            throw new IllegalArgumentException("purchases cannot be null or empty");
+        }
+
+        for (Object purchasesItem : purchases)
+        {
+            if (purchasesItem == null)
+            {
+                throw new IllegalArgumentException("purchases cannot be null");
+            }
+        }
+
+        this.purchases = new ArrayList<>(purchases);
     }
 }
